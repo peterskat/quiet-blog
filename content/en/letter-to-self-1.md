@@ -1,6 +1,6 @@
 ---
 title: Letter to Self 1
-date: "2026-03-28"
+date: '2026-03-28'
 description: Being the coach that I need.
 draft: false
 tags:
@@ -9,8 +9,8 @@ tags:
   - writing
 slug: letter-to-self
 excerpt: A letter on showing up, writing without perfection, and treating this blog as a quiet place to grow.
-coverImage: "https://res.cloudinary.com/dvy7c9ern/image/upload/v1774711547/about_rk7wpq.jpg"
-coverAlt: ""
+coverImage: ''
+coverAlt: ''
 ---
 Dear Tam,
 

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { siteConfig } from "@/lib/blog/config";
 import { aboutByLocale } from "@/lib/blog/about";
@@ -29,6 +30,7 @@ export default async function AboutPage({ params }: Props) {
     <div className="mx-auto max-w-3xl px-6 py-14 sm:py-20" lang={locale}>
       <h1 className="font-serif text-5xl leading-tight text-stone-900">{title}</h1>
       <div className="mt-8 space-y-6 text-lg leading-8 text-stone-700">
+        <Image src='https://res.cloudinary.com/dvy7c9ern/image/upload/v1774711547/about_rk7wpq.jpg'alt='about'/>
         {paragraphs.map((p, i) => (
           <p key={i}>{p}</p>
         ))}

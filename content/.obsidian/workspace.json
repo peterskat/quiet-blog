@@ -1,20 +1,24 @@
 {
   "main": {
-    "id": "12d05725d34e748d",
+    "id": "6fe61b0f857836f7",
     "type": "split",
     "children": [
       {
-        "id": "f9cf00e4acaabfc1",
+        "id": "4bbff0c46c00370c",
         "type": "tabs",
         "children": [
           {
-            "id": "70e1adf280c2fa9d",
+            "id": "eeaec15d489a93f3",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "en/letter-to-self-1.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "New tab"
+              "title": "letter-to-self-1"
             }
           }
         ]
@@ -23,15 +27,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "cfae047fe4cba53e",
+    "id": "058ef2a016e5b10e",
     "type": "split",
     "children": [
       {
-        "id": "ac26d37df3022481",
+        "id": "1d4ac6af1e7efa42",
         "type": "tabs",
         "children": [
           {
-            "id": "05d0a4a2fbedb766",
+            "id": "1e2e5c2462640f13",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -44,7 +48,7 @@
             }
           },
           {
-            "id": "29f161934354f779",
+            "id": "d6d147b84ec45efe",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -61,7 +65,7 @@
             }
           },
           {
-            "id": "af5385c24ed41185",
+            "id": "bcc1d259b89ce0d5",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -77,20 +81,20 @@
     "width": 300
   },
   "right": {
-    "id": "b1edbfd9e0b2767f",
+    "id": "1171654533b6a60b",
     "type": "split",
     "children": [
       {
-        "id": "284bb42c3e32dfbb",
+        "id": "d8da6cb6a8214cc1",
         "type": "tabs",
         "children": [
           {
-            "id": "7b04c1257e0f9233",
+            "id": "4bb19a6876c605d5",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "morning-light.md",
+                "file": "en/letter-to-self-1.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -100,25 +104,25 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for morning-light"
+              "title": "Backlinks for letter-to-self-1"
             }
           },
           {
-            "id": "ecba92751ee35a75",
+            "id": "90b09301c0e6d1fa",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "morning-light.md",
+                "file": "en/letter-to-self-1.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from morning-light"
+              "title": "Outgoing links from letter-to-self-1"
             }
           },
           {
-            "id": "6713978f07cd8741",
+            "id": "9682a6960e035a37",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -133,7 +137,7 @@
             }
           },
           {
-            "id": "14795faf1d659e98",
+            "id": "1c5f707a9eeb7fad",
             "type": "leaf",
             "state": {
               "type": "all-properties",
@@ -147,18 +151,18 @@
             }
           },
           {
-            "id": "26d2b49fd7c0d2e8",
+            "id": "2956c63859be8c10",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-                "file": "morning-light.md",
+                "file": "en/letter-to-self-1.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of morning-light"
+              "title": "Outline of letter-to-self-1"
             }
           }
         ]
@@ -179,16 +183,8 @@
       "bases:Create new base": false
     }
   },
-  "active": "05d0a4a2fbedb766",
+  "active": "eeaec15d489a93f3",
   "lastOpenFiles": [
-    "Untitled.canvas",
-    "2026-03-28.md",
-    "letter-to-self-1.md",
-    "Untitled 1",
-    "Untitled",
-    "the-quiet-of-beauty.md",
-    "morning-light.md",
-    "Untitled.md",
-    "raising-readers.md"
+    "cs/prvni-zapis.md"
   ]
 }

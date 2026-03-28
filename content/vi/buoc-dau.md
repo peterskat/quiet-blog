@@ -5,7 +5,7 @@ description: Một trang nhỏ để mở góc tiếng Việt.
 draft: false
 slug: buoc-dau
 excerpt: Một vài dòng mở đầu — không phải bản dịch, chỉ là một nhánh riêng.
-coverImage: "https://res.cloudinary.com/dvy7c9ern/image/upload/v1774711547/about_rk7wpq.jpg"
+coverImage: ""
 coverAlt: ""
 ---
 Đây là góc viết bằng tiếng Việt. Tôi không cố gắng làm “bản tương đương” với bài khác — chỉ muốn ghi lại những điều gần gũi: nhà, khoảng lặng, và những điều nhỏ.
