@@ -83,6 +83,7 @@ quiet-blog/
 │   ├── components/      # BlogImage, layouts, cards
 │   ├── lib/             # posts.ts, cloudinary.ts
 │   └── types/post.ts
+├── netlify.toml
 └── .env.example
 ```
 
@@ -93,8 +94,20 @@ quiet-blog/
 - `/blog/[slug]` — Post (SEO metadata + optional OG image when cover is set)
 - `/about` — About
 
+## Netlify deployment
+
+This repo includes `netlify.toml` with `@netlify/plugin-nextjs` so Next.js runs correctly on Netlify (SSR, routing, images).
+
+1. Push the repo to GitHub/GitLab/Bitbucket.
+2. **New site from Git** in Netlify and pick the repo.
+3. Build settings are read from `netlify.toml` (`npm run build`, `publish = ".next"`).
+4. Under **Site settings → Environment variables**, add the same keys as `.env.example` (at minimum `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` and `NEXT_PUBLIC_SITE_URL` for production URLs).
+
+**If the deploy fails with “publish directory was not found at …/build”:** your site may still have **Publish directory** set to `build` in the Netlify UI. Either remove it so `netlify.toml` wins, or set **Publish directory** to `.next` to match `next build` output. Do not use `build` unless your build script actually creates a `build/` folder.
+
 ## Scripts
 
 - `npm run dev` — Development
+- `npm run build` — Production build
 - `npm run start` — Run production server locally
 - `npm run lint` — Lint

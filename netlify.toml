@@ -1,0 +1,12 @@
+# Next.js on Netlify — uses the official runtime adapter (SSR, ISR, images).
+# https://docs.netlify.com/frameworks/next-js/overview/
+#
+# `publish` must match `next build` output (`.next`), not a generic `build` folder.
+# This overrides a wrong "Publish directory" in the Netlify UI (e.g. `build`).
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
