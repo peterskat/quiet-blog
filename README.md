@@ -1,113 +1,106 @@
 # Quiet Blog
 
-A calm, minimal blog built with Next.js (App Router), Tailwind CSS, and Markdown/MDX files in the repo.
+A calm, minimal site with **three independent editorial branches** (English, Czech, Vietnamese) in one Next.js (App Router) codebase. Content in each language is **not** a translation of the others—each folder is its own voice.
 
 ## Stack
 
-- Next.js (App Router)
+- Next.js (App Router), TypeScript
 - Tailwind CSS + `@tailwindcss/typography` (prose)
-- TypeScript
-- `gray-matter` + `remark` + `remark-gfm` + `remark-html` (GFM tables, lists, etc.)
-- Cloudinary for blog images (public IDs in frontmatter)
+- `gray-matter` + `remark` + `remark-gfm` + `remark-html`
+- Cloudinary for cover images (public IDs in frontmatter)
+- Config-driven gateway at `/` (`src/lib/blog/config.ts`)
+
+## Routes
+
+| Path | Purpose |
+|------|---------|
+| `/` | Soft gateway (“three doors”) into the three branches |
+| `/en`, `/cs`, `/vi` | Blog index for that branch only |
+| `/en/[slug]`, … | Post in that branch only |
+| `/en/about`, … | About copy per branch (independent text) |
+
+Unsupported locales → `404` (`notFound()`).
 
 ## Local setup
 
 1. `npm install`
-2. Copy `.env.example` to `.env.local` and set at least `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` if you want cover images and `BlogImage` to render.
+2. Copy `.env.example` to `.env.local` (set `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` for images).
 3. `npm run dev` → [http://localhost:3000](http://localhost:3000)
 
 ## Content layout
 
 | Path | Purpose |
 |------|---------|
-| `content/posts/` | Published posts only (`.md` or `.mdx`) |
-| `content/drafts/` | Work in progress — **never** read by the app |
+| `content/en/` | English posts (`.md` / `.mdx`) |
+| `content/cs/` | Czech posts |
+| `content/vi/` | Vietnamese posts |
+| `content/drafts/` | Optional; **not** read by the app (use or ignore) |
 
-The loader only scans `content/posts`. Anything under `content/drafts` is ignored.
+The loader only reads `content/<locale>/` for `locale` in `en` | `cs` | `vi`.
 
-## Frontmatter (strict)
+### Adding a new post
 
-Every post must include exactly these fields:
+1. Choose the language folder: `content/en`, `content/cs`, or `content/vi`.
+2. Add `my-post.md` (or `.mdx`) with YAML frontmatter and Markdown body.
+3. Set `slug` to the URL segment: e.g. `slug: my-post` → `/en/my-post`.
+4. Commit and deploy; `generateStaticParams` picks up new slugs on build.
+
+### Frontmatter (required fields)
 
 ```yaml
 title: string
+description: string   # SEO / meta
 date: string          # ISO, e.g. "2026-03-28"
-description: string
+slug: string
+excerpt: string       # Card / list preview
 draft: boolean
-tags: string[]
-slug: string          # used in /blog/[slug] — no dates in the URL
-coverImage: string    # Cloudinary public ID, e.g. blog/morning-light
-coverAlt: string
+coverImage: string    # Cloudinary public ID or ""
+coverAlt: string      # optional; use "" if no image
+tags:                 # optional list
+  - tag-one
 ```
 
-Use `draft: true` to keep a file under `content/posts` hidden from the site (or keep drafts in `content/drafts` and move when ready).
+`draft: true` posts are omitted from listings and static routes.
 
-## Writing in Obsidian
+## Editing the gateway copy
 
-1. Open this repo as an Obsidian vault (or symlink `content/posts` into a vault).
-2. Create a note under `content/posts` with `.md` or `.mdx`.
-3. Add the YAML frontmatter above. The `slug` is the URL segment (`/blog/my-slug`).
-4. Write the body in Markdown; Git is the source of truth.
-
-## Publishing a post
-
-1. Ensure `draft: false` and the file lives in `content/posts` (not `content/drafts`).
-2. Commit and push. Netlify (or any host) runs `npm run build`; routes are generated from your files.
-
-## Images with Cloudinary
-
-1. Upload images in the [Cloudinary Media Library](https://cloudinary.com/).
-2. Copy the **public ID** (e.g. `folder/my-image`), not the full URL.
-3. Set `coverImage` to that public ID and `coverAlt` to a short description.
-4. Set `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` in `.env.local` (and in Netlify **Site settings → Environment variables**).
-
-The `<BlogImage />` component and cover slots use `next/image` with a Cloudinary URL loader. Inline images inside Markdown are not wired to Cloudinary yet; use covers and future `BlogImage` placements for now.
+Invitation cards and site strings live in **`src/lib/blog/config.ts`** (`siteConfig.gateway`, `editorialBranches`, `branchTagline`). Change text there—no need to edit JSX structure.
 
 ## Environment variables
 
-See `.env.example`:
+See `.env.example` (`NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`, `NEXT_PUBLIC_SITE_URL`, etc.).
 
-- `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` — required for images in the UI
-- `CLOUDINARY_API_KEY` / `CLOUDINARY_API_SECRET` — reserved for future uploads; not required for reading public images
-- `NEXT_PUBLIC_SITE_URL` — optional canonical URL for metadata (set to your production URL on Netlify)
-
-## Project structure
+## Project structure (high level)
 
 ```text
-quiet-blog/
-├── content/
-│   ├── posts/           # Published .md / .mdx
-│   └── drafts/          # Never loaded by the app
-├── src/
-│   ├── app/blog/        # /blog and /blog/[slug]
-│   ├── components/      # BlogImage, layouts, cards
-│   ├── lib/             # posts.ts, cloudinary.ts
-│   └── types/post.ts
-├── netlify.toml
-└── .env.example
+src/
+├── app/
+│   ├── page.tsx              # Gateway /
+│   ├── layout.tsx
+│   └── [locale]/
+│       ├── layout.tsx
+│       ├── page.tsx          # Branch index
+│       ├── about/page.tsx
+│       └── [slug]/page.tsx   # Post
+├── components/
+│   ├── home/                 # Gateway UI
+│   └── blog/                 # Locale header, cards, article
+└── lib/blog/
+    ├── config.ts             # Locales, gateway, taglines
+    ├── posts.ts              # Loaders per locale
+    ├── metadata.ts           # SEO helpers
+    ├── routing.ts
+    ├── about.ts
+    └── types.ts
 ```
 
-## Pages
+## Netlify
 
-- `/` — Home, featured + recent posts
-- `/blog` — Index with tag filters
-- `/blog/[slug]` — Post (SEO metadata + optional OG image when cover is set)
-- `/about` — About
-
-## Netlify deployment
-
-This repo includes `netlify.toml` with `@netlify/plugin-nextjs` so Next.js runs correctly on Netlify (SSR, routing, images).
-
-1. Push the repo to GitHub/GitLab/Bitbucket.
-2. **New site from Git** in Netlify and pick the repo.
-3. Build settings are read from `netlify.toml` (`npm run build`, `publish = ".next"`).
-4. Under **Site settings → Environment variables**, add the same keys as `.env.example` (at minimum `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` and `NEXT_PUBLIC_SITE_URL` for production URLs).
-
-**If the deploy fails with “publish directory was not found at …/build”:** your site may still have **Publish directory** set to `build` in the Netlify UI. Either remove it so `netlify.toml` wins, or set **Publish directory** to `.next` to match `next build` output. Do not use `build` unless your build script actually creates a `build/` folder.
+`netlify.toml` uses `@netlify/plugin-nextjs` and `publish = ".next"`. Set env vars in the Netlify UI. If the UI still forces **Publish directory** = `build`, clear it or set `.next` (see earlier deploy notes).
 
 ## Scripts
 
 - `npm run dev` — Development
 - `npm run build` — Production build
-- `npm run start` — Run production server locally
+- `npm run start` — Production server locally
 - `npm run lint` — Lint

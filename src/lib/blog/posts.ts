@@ -4,12 +4,17 @@ import matter from "gray-matter";
 import { remark } from "remark";
 import remarkGfm from "remark-gfm";
 import html from "remark-html";
-import type { Post, PostFrontmatter, PostSummary } from "@/types/post";
+import type { Locale } from "@/lib/blog/config";
+import type { Post, PostFrontmatter, PostSummary } from "@/lib/blog/types";
 
-const postsDir = path.join(process.cwd(), "content/posts");
+const contentRoot = path.join(process.cwd(), "content");
 
 function sortByNewest(first: { date: string }, second: { date: string }) {
   return new Date(second.date).getTime() - new Date(first.date).getTime();
+}
+
+function localeDir(locale: Locale): string {
+  return path.join(contentRoot, locale);
 }
 
 function listMarkdownFiles(dir: string): string[] {
@@ -21,32 +26,38 @@ function validateFrontmatter(raw: Record<string, unknown>, filePath: string): Po
   const err = (msg: string) => new Error(`Invalid frontmatter in ${filePath}: ${msg}`);
 
   if (typeof raw.title !== "string" || !raw.title.trim()) throw err("title must be a non-empty string");
-  if (typeof raw.date !== "string" || !raw.date.trim()) throw err("date must be an ISO date string");
   if (typeof raw.description !== "string") throw err("description must be a string");
-  if (typeof raw.draft !== "boolean") throw err("draft must be a boolean");
-  if (!Array.isArray(raw.tags) || !raw.tags.every((t) => typeof t === "string"))
-    throw err("tags must be an array of strings");
+  if (typeof raw.date !== "string" || !raw.date.trim()) throw err("date must be an ISO date string");
   if (typeof raw.slug !== "string" || !raw.slug.trim()) throw err("slug must be a non-empty string");
-  if (typeof raw.coverImage !== "string") throw err("coverImage must be a string (Cloudinary public ID)");
-  if (typeof raw.coverAlt !== "string") throw err("coverAlt must be a string");
+  if (typeof raw.excerpt !== "string") throw err("excerpt must be a string");
+  if (typeof raw.coverImage !== "string") throw err("coverImage must be a string (Cloudinary public ID or empty)");
+  if (typeof raw.draft !== "boolean") throw err("draft must be a boolean");
+
+  const tags = raw.tags;
+  if (tags !== undefined && (!Array.isArray(tags) || !tags.every((t) => typeof t === "string"))) {
+    throw err("tags must be an array of strings when present");
+  }
+
+  const coverAlt = raw.coverAlt;
+  if (coverAlt !== undefined && typeof coverAlt !== "string") throw err("coverAlt must be a string when present");
 
   return {
     title: raw.title.trim(),
-    date: raw.date.trim(),
     description: raw.description,
-    draft: raw.draft,
-    tags: raw.tags as string[],
+    date: raw.date.trim(),
     slug: raw.slug.trim(),
+    excerpt: raw.excerpt,
     coverImage: raw.coverImage.trim(),
-    coverAlt: raw.coverAlt
+    draft: raw.draft,
+    coverAlt: typeof coverAlt === "string" ? coverAlt : "",
+    tags: tags as string[] | undefined
   };
 }
 
 function readPostFile(filePath: string): { frontmatter: PostFrontmatter; body: string } {
   const fileContents = fs.readFileSync(filePath, "utf8");
   const { data, content } = matter(fileContents);
-  const frontmatter = validateFrontmatter(data as Record<string, unknown>, filePath);
-  return { frontmatter, body: content };
+  return { frontmatter: validateFrontmatter(data as Record<string, unknown>, filePath), body: content };
 }
 
 async function markdownToHtml(markdown: string): Promise<string> {
@@ -54,13 +65,12 @@ async function markdownToHtml(markdown: string): Promise<string> {
   return processed.toString();
 }
 
-/** All markdown/MDX files in /content/posts (drafts folder is never scanned). */
-function getPostFilePaths(): string[] {
-  return listMarkdownFiles(postsDir).map((f) => path.join(postsDir, f));
+function getPostFilePaths(locale: Locale): string[] {
+  return listMarkdownFiles(localeDir(locale)).map((f) => path.join(localeDir(locale), f));
 }
 
-export function getPublishedSummaries(): PostSummary[] {
-  const paths = getPostFilePaths();
+export function getPublishedSummaries(locale: Locale): PostSummary[] {
+  const paths = getPostFilePaths(locale);
   const summaries: PostSummary[] = [];
 
   for (const filePath of paths) {
@@ -71,33 +81,29 @@ export function getPublishedSummaries(): PostSummary[] {
 
   const slugs = summaries.map((p) => p.slug);
   const dup = slugs.find((s, i) => slugs.indexOf(s) !== i);
-  if (dup) throw new Error(`Duplicate slug "${dup}" in content/posts`);
+  if (dup) throw new Error(`Duplicate slug "${dup}" in content/${locale}`);
 
   return summaries.sort(sortByNewest);
 }
 
-export function getPostSlugs(): string[] {
-  return getPublishedSummaries().map((p) => p.slug);
+export function getPostSlugs(locale: Locale): string[] {
+  return getPublishedSummaries(locale).map((p) => p.slug);
 }
 
-export function getPostFrontmatters(): PostSummary[] {
-  return getPublishedSummaries();
-}
-
-export function getAllTags(): string[] {
-  const posts = getPublishedSummaries();
+export function getAllTags(locale: Locale): string[] {
+  const posts = getPublishedSummaries(locale);
   const tags = new Set<string>();
-  posts.forEach((post) => post.tags.forEach((tag) => tags.add(tag)));
+  posts.forEach((post) => post.tags?.forEach((tag) => tags.add(tag)));
   return Array.from(tags).sort((a, b) => a.localeCompare(b));
 }
 
 export function filterPostsByTag(posts: PostSummary[], tag: string | undefined) {
   if (!tag) return posts;
-  return posts.filter((post) => post.tags.includes(tag));
+  return posts.filter((post) => post.tags?.includes(tag));
 }
 
-export async function getPostBySlug(slug: string): Promise<Post | null> {
-  const paths = getPostFilePaths();
+export async function getPostBySlug(locale: Locale, slug: string): Promise<Post | null> {
+  const paths = getPostFilePaths(locale);
 
   for (const filePath of paths) {
     const { frontmatter, body } = readPostFile(filePath);
