@@ -9,7 +9,7 @@ tags:
   - writing
 slug: letter-to-self
 excerpt: A letter on showing up, writing without perfection, and treating this blog as a quiet place to grow.
-coverImage: ''
+coverImage: 'lts1_frjjlr'
 coverAlt: ''
 ---
 Dear Tam,

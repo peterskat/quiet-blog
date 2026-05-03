@@ -66,6 +66,57 @@ tags:                 # optional list
 
 Invitation cards and site strings live in **`src/lib/blog/config.ts`** (`siteConfig.gateway`, `editorialBranches`, `branchTagline`). Change text there—no need to edit JSX structure.
 
+## Cafe Corner sub-site
+
+Cafe Corner is a host-aware micro-site inside the same Next.js app. Requests for
+`cafecorner.tamwriting.com` are rewritten by `src/middleware.ts` into the internal
+route namespace `/__cafecorner`, so visitors keep clean subdomain URLs like
+`https://cafecorner.tamwriting.com/menu` while the app serves the matching
+Cafe Corner route.
+
+The route files live under `src/app/%5F%5Fcafecorner`. Next.js treats folders
+that begin with `_` as private, so the encoded folder name is the App Router-safe
+way to create the internal `/__cafecorner` namespace.
+
+The internal `__cafecorner` path is not intended as a public URL on the main host.
+Cafe Corner metadata uses `https://cafecorner.tamwriting.com` for canonicals and
+Open Graph URLs to avoid duplicate SEO surfaces.
+
+### Adding Cafe Corner pages
+
+Add new pages under `src/app/%5F%5Fcafecorner`. For example:
+
+```text
+src/app/%5F%5Fcafecorner/new-room/page.tsx
+```
+
+Use Cafe Corner components from `src/components/cafecorner` so the micro-site can
+evolve independently from the main blog design.
+
+### Cafe Corner config and theme
+
+Shared Cafe Corner labels, navigation, metadata, hotspot destinations, and
+hotspot positions live in `src/lib/cafecorner/config.ts`.
+
+Visual tokens live in `src/lib/cafecorner/theme.ts`. Adjust colors, shadows,
+radius values, and texture references there before changing component markup.
+
+The landing scene uses the Cloudinary public ID `cafecornerintro`, configured as
+`cafeCornerConfig.introImage`. Hotspot positions are percentage-based rectangles
+over that responsive image. Tune the `position` values in
+`cafeCornerConfig.hotspots` when the image crop or composition changes.
+
+### Local Cafe Corner development
+
+Run the normal dev server:
+
+```bash
+npm run dev
+```
+
+Then use `http://cafecorner.localhost:3000` for the subdomain route locally.
+`http://localhost:3000` remains the main Tam Writing site.
+
 ## Environment variables
 
 See `.env.example` (`NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`, `NEXT_PUBLIC_SITE_URL`, etc.).
